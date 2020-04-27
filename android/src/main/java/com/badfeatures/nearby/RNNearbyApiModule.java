@@ -4,8 +4,6 @@ package com.badfeatures.nearby;
 import android.app.PendingIntent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.facebook.react.bridge.Arguments;
@@ -32,6 +30,9 @@ import com.google.android.gms.nearby.messages.PublishOptions;
 import com.google.android.gms.nearby.messages.Strategy;
 import com.google.android.gms.nearby.messages.SubscribeCallback;
 import com.google.android.gms.nearby.messages.SubscribeOptions;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 public class RNNearbyApiModule extends ReactContextBaseJavaModule implements LifecycleEventListener, GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
@@ -66,8 +67,10 @@ public class RNNearbyApiModule extends ReactContextBaseJavaModule implements Lif
 
     private final ReactApplicationContext _reactContext;
     private GoogleApiClient _googleAPIClient;
-    @Nullable private Message _publishedMessage;
-    @NonNull private volatile Boolean _isPublishing = false;
+    @Nullable
+    private Message _publishedMessage;
+    @NonNull
+    private volatile Boolean _isPublishing = false;
     @NonNull private volatile Boolean _isSubscribing = false;
     @NonNull private Boolean _isBLEOnly = false;
     @NonNull private MessageListener _messageListener = new MessageListener() {
