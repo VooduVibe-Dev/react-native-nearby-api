@@ -36,7 +36,7 @@ static GNSMessageManager *_messageManager = nil;
 
 /// The Google Play Service API key supplied.
 static NSString *_apiKey = nil;
-static BOOL _isBLEOnly = false;
+static BOOL _isBLEOnly = true;
 
 @implementation RNNearbyApi
 
@@ -191,6 +191,7 @@ RCT_EXPORT_METHOD(publish:(nonnull NSString *)messageString) {
         publication = [[self sharedMessageManager] publicationWithMessage: message paramsBlock:^(GNSPublicationParams *params) {
             params.strategy = [GNSStrategy strategyWithParamsBlock:^(GNSStrategyParams *params) {
                 params.discoveryMediums = _isBLEOnly ? kGNSDiscoveryMediumsBLE : kGNSDiscoveryModeDefault;
+                params.allowInBackground = YES;
             }];
         }];
         [self sendEvent:PUBLISH_SUCCESS withString:[NSString stringWithFormat:@"Successfully published: %@", messageString]];
@@ -232,7 +233,7 @@ RCT_EXPORT_METHOD(subscribe) {
             [welf sendEvent:MESSAGE_LOST withMessage:message];
         } paramsBlock:^(GNSSubscriptionParams *params) {
             params.strategy = [GNSStrategy strategyWithParamsBlock:^(GNSStrategyParams *params) {
-                params.allowInBackground = false; //TODO: Make this configurable
+                params.allowInBackground = YES; //TODO: Make this configurable
                 params.discoveryMediums = _isBLEOnly ? kGNSDiscoveryMediumsBLE : kGNSDiscoveryModeDefault;
             }];
         }];
