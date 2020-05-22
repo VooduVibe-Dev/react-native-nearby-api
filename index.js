@@ -55,9 +55,9 @@ export class NearbyAPI {
     this._nearbyAPI.isConnected(cb);
   };
 
-  publish = message => {
+  publish = (message , bgMode) => {
     if (message !== null) {
-      this._nearbyAPI.publish(message);
+      this._nearbyAPI.publish(message,bgMode);
     } else {
       throw "Unable to publish a null message.";
     }
@@ -148,3 +148,4 @@ export class NearbyAPI {
     }
   };
 }
+
