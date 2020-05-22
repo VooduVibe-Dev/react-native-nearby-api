@@ -1,4 +1,5 @@
 
+
 #import "RNNearbyApi.h"
 
 /*
@@ -37,6 +38,7 @@ static GNSMessageManager *_messageManager = nil;
 /// The Google Play Service API key supplied.
 static NSString *_apiKey = nil;
 static BOOL _isBLEOnly = true;
+static BOOL _isBackgroundEnabled = false;
 
 @implementation RNNearbyApi
 
@@ -172,8 +174,9 @@ RCT_EXPORT_METHOD(isPublishing:(RCTResponseSenderBlock) callback)
     }
 }
 
-RCT_EXPORT_METHOD(publish:(nonnull NSString *)messageString) {
+RCT_EXPORT_METHOD(publish:(nonnull NSString *)messageString isBackgroundEnabled:(BOOL)isBackgroundEnabled) {
     @try {
+        _isBackgroundEnabled = isBackgroundEnabled;
         if(![self isConnected]) {
             @throw [NSException
                     exceptionWithName:@"NotConnected"
@@ -189,9 +192,10 @@ RCT_EXPORT_METHOD(publish:(nonnull NSString *)messageString) {
         // Create new message
         GNSMessage *message = [GNSMessage messageWithContent: [messageString dataUsingEncoding: NSUTF8StringEncoding]];
         publication = [[self sharedMessageManager] publicationWithMessage: message paramsBlock:^(GNSPublicationParams *params) {
+            
             params.strategy = [GNSStrategy strategyWithParamsBlock:^(GNSStrategyParams *params) {
                 params.discoveryMediums = _isBLEOnly ? kGNSDiscoveryMediumsBLE : kGNSDiscoveryModeDefault;
-                params.allowInBackground = YES;
+                params.allowInBackground = _isBackgroundEnabled;
             }];
         }];
         [self sendEvent:PUBLISH_SUCCESS withString:[NSString stringWithFormat:@"Successfully published: %@", messageString]];
@@ -233,7 +237,7 @@ RCT_EXPORT_METHOD(subscribe) {
             [welf sendEvent:MESSAGE_LOST withMessage:message];
         } paramsBlock:^(GNSSubscriptionParams *params) {
             params.strategy = [GNSStrategy strategyWithParamsBlock:^(GNSStrategyParams *params) {
-                params.allowInBackground = YES; //TODO: Make this configurable
+                params.allowInBackground = _isBackgroundEnabled; //TODO: Make this configurable
                 params.discoveryMediums = _isBLEOnly ? kGNSDiscoveryMediumsBLE : kGNSDiscoveryModeDefault;
             }];
         }];
@@ -250,4 +254,3 @@ RCT_EXPORT_METHOD(unsubscribe) {
 }
 
 @end
-  
