@@ -43,8 +43,8 @@ export class NearbyAPI {
     this._isBLEOnly = !!bleOnly;
   }
 
-  connect = (apiKey,isBLEOnly) => {
-    this._nearbyAPI.connect(apiKey, isBLEOnly);
+  connect = (apiKey) => {
+    this._nearbyAPI.connect(apiKey,this._isBLEOnly);
   };
 
   disconnect = () => {

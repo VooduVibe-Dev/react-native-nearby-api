@@ -138,16 +138,16 @@ public class RNNearbyApiModule extends ReactContextBaseJavaModule implements Lif
 
     private PublishOptions createPublishOptions(int ttlSeconds, boolean bleOnly) {
         Strategy pubSubStrategy;
-        if(bleOnly == false) {
-            Log.d(getName(), "blueusuage vv : " + bleOnly);
-            pubSubStrategy = new Strategy.Builder().setTtlSeconds(ttlSeconds).build();
-        } else {
-            Log.d(getName(), "blueusuage vv 1 : " + bleOnly);
+        //if(bleOnly == false) {
+          //  Log.d(getName(), "blueusuage vv : " + bleOnly);
+          //  pubSubStrategy = new Strategy.Builder().setTtlSeconds(ttlSeconds).build();
+       // } else {
+         //   Log.d(getName(), "blueusuage vv 1 : " + bleOnly);
             pubSubStrategy = new Strategy.Builder()
                     .setDiscoveryMode(Strategy.DISCOVERY_MODE_BROADCAST)
                     .setTtlSeconds(ttlSeconds)
                     .build();
-        }
+       // }
 
         PublishOptions options = new PublishOptions.Builder()
                 .setStrategy(pubSubStrategy)
