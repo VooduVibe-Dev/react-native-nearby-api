@@ -43,8 +43,8 @@ export class NearbyAPI {
     this._isBLEOnly = !!bleOnly;
   }
 
-  connect = apiKey => {
-    this._nearbyAPI.connect(apiKey, this._isBLEOnly);
+  connect = (apiKey,isBLEOnly) => {
+    this._nearbyAPI.connect(apiKey, isBLEOnly);
   };
 
   disconnect = () => {
@@ -57,7 +57,10 @@ export class NearbyAPI {
 
   publish = (message , bgMode) => {
     if (message !== null) {
-      this._nearbyAPI.publish(message,bgMode);
+      if(Platform.OS === "android")
+        this._nearbyAPI.publish(message);
+      else
+        this._nearbyAPI.publish(message,bgMode);
     } else {
       throw "Unable to publish a null message.";
     }

@@ -136,8 +136,18 @@ public class RNNearbyApiModule extends ReactContextBaseJavaModule implements Lif
         return _googleAPIClient;
     }
 
-    private PublishOptions createPublishOptions(int ttlSeconds) {
-        Strategy pubSubStrategy = new Strategy.Builder().setTtlSeconds(ttlSeconds).build();
+    private PublishOptions createPublishOptions(int ttlSeconds, boolean bleOnly) {
+        Strategy pubSubStrategy;
+        if(bleOnly == false) {
+            Log.d(getName(), "blueusuage vv : " + bleOnly);
+            pubSubStrategy = new Strategy.Builder().setTtlSeconds(ttlSeconds).build();
+        } else {
+            Log.d(getName(), "blueusuage vv 1 : " + bleOnly);
+            pubSubStrategy = new Strategy.Builder()
+                    .setDiscoveryMode(Strategy.DISCOVERY_MODE_BROADCAST)
+                    .setTtlSeconds(ttlSeconds)
+                    .build();
+        }
 
         PublishOptions options = new PublishOptions.Builder()
                 .setStrategy(pubSubStrategy)
@@ -152,9 +162,12 @@ public class RNNearbyApiModule extends ReactContextBaseJavaModule implements Lif
 
     private SubscribeOptions createSubscribeOptions(int ttlSeconds, boolean bleOnly) {
         Strategy pubSubStrategy;
+        Log.d(getName(), "blueusuage out : " + _isBLEOnly.toString());
         if(bleOnly) {
+            Log.d(getName(), "blueusuage in 11");
             pubSubStrategy = Strategy.BLE_ONLY;
         } else {
+            Log.d(getName(), "blueusuage in 12");
             pubSubStrategy = new Strategy.Builder().setTtlSeconds(ttlSeconds).build();
         }
 
@@ -202,6 +215,9 @@ public class RNNearbyApiModule extends ReactContextBaseJavaModule implements Lif
             return;
         }
         _isBLEOnly = bleOnly;
+
+        Log.d(getName(), "blueusuage 13 : " + _isBLEOnly.toString());
+
         GoogleApiClient client = getGoogleAPIInstance();
         if(client.isConnected()) {
             Log.w(getName(), "Google API Client is already connected.");
@@ -237,7 +253,7 @@ public class RNNearbyApiModule extends ReactContextBaseJavaModule implements Lif
         if(client.isConnected()) {
             final Message publishMessage = new Message(message.getBytes());
             _publishedMessage = publishMessage;
-            PublishOptions options = createPublishOptions(180);
+            PublishOptions options = createPublishOptions(180, _isBLEOnly);
             Log.i(getName(), "Publishing message: " + new String(publishMessage.getContent()));
             Nearby.Messages.publish(client, publishMessage, options)
                     .setResultCallback(new ResultCallback<Status>() {
